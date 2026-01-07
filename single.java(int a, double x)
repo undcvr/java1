@@ -1,0 +1,86 @@
+package untitled2;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Шаг 1: создаем record Pair с двумя полями: int a и double x
+ * Можно менять типы полей под конкретное задание.
+ */
+record Pair(int a, double x) {
+    /**
+     * Переопределяем equals, если есть особое условие равенства.
+     * Например, здесь равны, если сумма a + x одинакова (пример из прошлого задания)
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Pair other)) return false;
+        // Условие равенства: сумма полей равна
+        return (this.a + this.x) == (other.a + other.x);
+    }
+
+    @Override
+    public int hashCode() {
+        // hashCode должен соответствовать equals
+        return Double.valueOf(a + x).hashCode();
+    }
+}
+
+/**
+ * Шаг 2: создаем класс Container для работы с множеством Pair
+ */
+class Container {
+
+    // Поле: множество Pair
+    private final Set<Pair> pairs;
+
+    // Конструктор: инициализация множества данными из списка
+    public Container(List<Pair> list) {
+        this.pairs = new HashSet<>(); // HashSet, можно LinkedHashSet, если важен порядок
+        if (list != null) {
+            this.pairs.addAll(list);
+        }
+    }
+
+    /**
+     * Шаг 3: метод process
+     * Пример: возвращаем список чисел (int), которые соответствуют условию
+     * Тут условие можно менять под задание:
+     * например, -150 <= a * x < 150
+     */
+    public List<Integer> process() {
+        List<Integer> result = new ArrayList<>();
+
+        for (Pair p : pairs) {
+            double product = p.a() * p.x();
+            // Пример условия: фильтр
+            if (product >= -150 && product < 150) {
+                result.add((int) product); // преобразуем double в int
+            }
+        }
+
+        // Сортируем по убыванию (можно менять на ascending)
+        result.sort(Comparator.reverseOrder());
+        return result;
+    }
+
+    /**
+     * Шаг 4: метод removeOnCondition
+     * Пример: удаляем все пары, где a + x < 0
+     */
+    public void removeOnCondition() {
+        Iterator<Pair> it = pairs.iterator();
+        while (it.hasNext()) {
+            Pair p = it.next();
+            if ((p.a() + p.x()) < 0) {
+                it.remove();
+            }
+        }
+    }
+}
+
