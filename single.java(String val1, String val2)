@@ -1,0 +1,87 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+record Pair(String val1, String val2) {
+
+    /**
+     * Равенство: если суммарная длина строк одинакова
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Pair other)) return false;
+
+        int thisSum = (val1 == null ? 0 : val1.length())
+                    + (val2 == null ? 0 : val2.length());
+
+        int otherSum = (other.val1 == null ? 0 : other.val1.length())
+                     + (other.val2 == null ? 0 : other.val2.length());
+
+        return thisSum == otherSum;
+    }
+
+    @Override
+    public int hashCode() {
+        int sum = (val1 == null ? 0 : val1.length())
+                + (val2 == null ? 0 : val2.length());
+        return Integer.hashCode(sum);
+    }
+}
+
+class Container {
+
+    private final Set<Pair> pairs;
+
+    public Container(List<Pair> list) {
+        this.pairs = new HashSet<>();
+        if (list != null) {
+            this.pairs.addAll(list);
+        }
+    }
+
+    /**
+     * process():
+     * 1) считаем суммарную длину строк
+     * 2) фильтруем по условию
+     * 3) сортируем по убыванию
+     */
+    public List<Integer> process() {
+        List<Integer> result = new ArrayList<>();
+
+        for (Pair p : pairs) {
+            int len1 = (p.val1() == null) ? 0 : p.val1().length();
+            int len2 = (p.val2() == null) ? 0 : p.val2().length();
+            int sumLength = len1 + len2;
+
+            // пример условия
+            if (sumLength >= 1 && sumLength < 150) {
+                result.add(sumLength);
+            }
+        }
+
+        result.sort(Comparator.reverseOrder());
+        return result;
+    }
+
+    /**
+     * removeOnCondition():
+     * удаляем элементы, где суммарная длина < 5
+     */
+    public void removeOnCondition() {
+        Iterator<Pair> it = pairs.iterator();
+        while (it.hasNext()) {
+            Pair p = it.next();
+
+            int len1 = (p.val1() == null) ? 0 : p.val1().length();
+            int len2 = (p.val2() == null) ? 0 : p.val2().length();
+
+            if (len1 + len2 < 5) {
+                it.remove();
+            }
+        }
+    }
+}
